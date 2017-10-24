@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-erlang:latest
+FROM bitwalker/alpine-erlang:20.1
 
 MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
 
@@ -6,18 +6,19 @@ MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT=2017-01-04
+ENV REFRESHED_AT=2017-10-01 \
+    ELIXIR_VERSION=v1.5.2
 
 WORKDIR /tmp/elixir-build
 
 RUN \
+    apk --no-cache --update upgrade && \
     apk add --no-cache --update --virtual .elixir-build \
       make && \
     apk add --no-cache --update \
       git && \
-    git clone https://github.com/elixir-lang/elixir && \
+    git clone https://github.com/elixir-lang/elixir --depth 1 --branch $ELIXIR_VERSION && \
     cd elixir && \
-    git checkout v1.4.0 && \
     make && make install && \
     mix local.hex --force && \
     mix local.rebar --force && \
